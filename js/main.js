@@ -15,7 +15,7 @@ import n_kalimba_a5 from '../assets/audio/kalimba_keys/n_kalimba_a5.wav'
 import o_kalimba_b5 from '../assets/audio/kalimba_keys/o_kalimba_b5.wav'
 import p_kalimba_c6 from '../assets/audio/kalimba_keys/p_kalimba_c6.wav'
 
-const keyElements = document.querySelectorAll('.key');
+const keyElements = document.querySelectorAll('.key')
 
 const notePathMap = {
   a_kalimba_b3: a_kalimba_b3,
@@ -36,18 +36,28 @@ const notePathMap = {
   p_kalimba_c6: p_kalimba_c6,
 }
 
+const noteTimeouts = {}
 
-const playHandler = (event) => {
-  const audio = new Audio(notePathMap[event.target.dataset.note])
-  audio.play();
-  event.target.classList.add('shakeX');
+const playHandler = (keyElement) => {
+  const note = keyElement.dataset.note
+  const audio = new Audio(notePathMap[note])
+  audio.play()
+
+  if (keyElement.classList.contains('shakeX')) {
+    keyElement.classList.remove('shakeX')
+  }
 
   setTimeout(() => {
-    event.target.classList.remove('shakeX')
-  }, 300);
+    keyElement.classList.add('shakeX')
+  }, 0)
+
+  clearTimeout(noteTimeouts[note])
+  noteTimeouts[note] = setTimeout(() => {
+    keyElement.classList.remove('shakeX')
+  }, 300)
 }
 
 keyElements.forEach((key) => {
-  key.addEventListener('click', playHandler);
+  key.addEventListener('click', ({ target }) => playHandler(target))
 })
 
